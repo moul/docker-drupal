@@ -3,6 +3,11 @@
 echo "Starting SSHD"
 /usr/sbin/sshd -D &
 
+if [ ! -e /root/drush-backups/archive-dump ]; then
+    mkdir -p /data/backups/drush
+    ln -s /data/backups/drush /root/drush-backups/archive-dump
+fi
+
 if [ ! -d /data/sites/default ]; then
     echo "Installing Drupal sites"
     cd /data; tar xzf /var/www/sites.tgz

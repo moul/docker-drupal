@@ -7,6 +7,7 @@ RUN apt-get -y install git mysql-client apache2 libapache2-mod-php5 pwgen python
 RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -s /bin/true /sbin/initctl
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server
+RUN apt-get -y install curl apache2-utils php-apc php5-memcache tmux
 
 RUN apt-get clean
 RUN sed -i "s/^bind-address/#bind-address/" /etc/mysql/my.cnf
@@ -22,12 +23,16 @@ RUN echo "root:root" | chpasswd
 
 RUN mkdir -p /data/
 RUN ln -sf /data/sites /var/www/sites
+RUN mkdir -p /root/.ssh
+RUN ln -sf /data/authorized_keys /root/.ssh/
+RUN ln -s /var/www/ /drupal
+RUN ln -s /var/www/sites/ /sites
+RUN mkdir -p /root/drush-backups
 
 RUN sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/sites-available/default
 RUN sed -i 's/^bind-address.*/bind-address = 0.0.0.0/' /etc/mysql/my.cnf
 RUN sed -i 's/^datadir.*/datadir = \/data\/mysql/' /etc/mysql/my.cnf
 RUN a2enmod rewrite vhost_alias
-RUN ln -s /var/www/sites/default /drupal
 
 EXPOSE 80
 EXPOSE 22
