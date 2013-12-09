@@ -3,6 +3,20 @@
 echo "Starting SSHD"
 /usr/sbin/sshd -D &
 
+if [ -f /data/ssh-pw.txt ]; then
+    echo "root:$(cat /data/ssh-pw.txt)" | chpasswd
+fi
+
+if [ -d /data/php5 ]; then
+    rm -rf /etc/php5
+    ln -s /data/php5 /etc/php5
+fi
+
+if [ -f /data/.htaccess ]; then
+    rm -f /var/www/.htaccess
+    ln -s /data/.htaccess /var/www/.htaccess
+fi
+
 if [ ! -e /root/drush-backups/archive-dump ]; then
     mkdir -p /data/backups/drush
     ln -s /data/backups/drush /root/drush-backups/archive-dump
