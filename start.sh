@@ -43,16 +43,19 @@ DRUPAL_DB="drupal"
 MYSQL_PASSWORD=$(cat /data/mysql-root-pw.txt)
 DRUPAL_PASSWORD=$(cat /data/drupal-db-pw.txt)
 
+chmod 755 /data
+
 MYSQL_STARTED=false
 if [ ! -d /data/mysql ]; then
     echo "Installing Mysql tables"
     cd /data && tar xf /var/lib/mysql.tgz
     # Start mysql
     MYSQL_STARTED=true
-    /usr/bin/mysqld_safe & 
+    /usr/bin/mysqld_safe &
+
     sleep 10s
 
-    mysqladmin -u root password $MYSQL_PASSWORD 
+    mysqladmin -u root password $MYSQL_PASSWORD
     echo mysql root password: $MYSQL_PASSWORD
     echo drupal password: $DRUPAL_PASSWORD
     mysql -uroot -p$MYSQL_PASSWORD -e "CREATE DATABASE drupal; GRANT ALL PRIVILEGES ON drupal.* TO 'drupal'@'localhost' IDENTIFIED BY '$DRUPAL_PASSWORD'; FLUSH PRIVILEGES;"
@@ -63,7 +66,7 @@ if [ ! -f /data/sites/default/settings.php ]; then
     # Start mysql
     if [ "$MYSQL_STARTED" == "false" ]; then
 	MYSQL_STARTED=true
-	/usr/bin/mysqld_safe & 
+	/usr/bin/mysqld_safe &
 	sleep 10s
     fi
 
@@ -72,7 +75,8 @@ if [ ! -f /data/sites/default/settings.php ]; then
 fi
 
 if [ "$MYSQL_STARTED" == "true" ]; then
-    killall mysqld sleep 10s
+    killall mysqld
+    sleep 10s
 fi
 
 echo "Starting Supervisord"
