@@ -38,6 +38,7 @@ RUN printf "<Directory /var/www>\nAllowOverride All\n</Directory>" > /etc/apache
 EXPOSE 80
 EXPOSE 22
 #VOLUMES ["/data"]
+CMD ["/bin/bash", "/start.sh"]
 
 ADD ./drushrc.php /root/.drushrc.php
 ADD ./start.sh /
